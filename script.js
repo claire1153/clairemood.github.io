@@ -1,6 +1,19 @@
 // 全局变量
 let currentDate = new Date();
 let selectedMood = null;
+let currentUser = 'guest';
+
+// 用户数据存储
+const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+// 初始化当前用户
+function initCurrentUser() {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        currentUser = savedUser;
+        document.getElementById('current-user').textContent = currentUser;
+    }
+}
 
 // 心情表情映射
 const moodEmojis = {
@@ -23,6 +36,9 @@ const moodTexts = {
 // 初始化
 function init() {
     try {
+        // 初始化当前用户
+        initCurrentUser();
+        
         // 加载保存的心情数据
         loadMoodData();
         
@@ -31,6 +47,9 @@ function init() {
         
         // 绑定事件
         bindEvents();
+        
+        // 绑定用户相关事件
+        bindUserEvents();
     } catch (error) {
         console.error('初始化错误:', error);
         alert('初始化时出现错误，请刷新页面重试');
@@ -66,6 +85,124 @@ function bindEvents() {
     });
 }
 
+// 绑定用户相关事件
+function bindUserEvents() {
+    const modal = document.getElementById('user-modal');
+    const userBtn = document.getElementById('user-btn');
+    const closeBtn = document.querySelector('.close');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const loginBtn = document.getElementById('login-btn');
+    const registerBtn = document.getElementById('register-btn');
+    
+    // 打开模态框
+    userBtn.addEventListener('click', function() {
+        modal.style.display = 'block';
+    });
+    
+    // 关闭模态框
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    // 点击模态框外部关闭
+    window.addEventListener('click', function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // 标签切换
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // 移除所有标签的active状态
+            tabBtns.forEach(b => b.classList.remove('active'));
+            // 添加当前标签的active状态
+            this.classList.add('active');
+            
+            // 隐藏所有内容
+            document.getElementById('login-tab').style.display = 'none';
+            document.getElementById('register-tab').style.display = 'none';
+            
+            // 显示当前标签的内容
+            document.getElementById(`${this.dataset.tab}-tab`).style.display = 'block';
+        });
+    });
+    
+    // 登录
+    loginBtn.addEventListener('click', function() {
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+        
+        if (!username || !password) {
+            alert('请输入用户名和密码');
+            return;
+        }
+        
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        if (users[username] && users[username] === password) {
+            // 登录成功
+            currentUser = username;
+            localStorage.setItem('currentUser', currentUser);
+            document.getElementById('current-user').textContent = currentUser;
+            modal.style.display = 'none';
+            
+            // 重新加载数据
+            reloadUserData();
+            alert('登录成功！');
+        } else {
+            alert('用户名或密码错误');
+        }
+    });
+    
+    // 注册
+    registerBtn.addEventListener('click', function() {
+        const username = document.getElementById('register-username').value.trim();
+        const password = document.getElementById('register-password').value;
+        
+        if (!username || !password) {
+            alert('请输入用户名和密码');
+            return;
+        }
+        
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        if (users[username]) {
+            alert('用户名已存在');
+            return;
+        }
+        
+        // 注册成功
+        users[username] = password;
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        // 自动登录
+        currentUser = username;
+        localStorage.setItem('currentUser', currentUser);
+        document.getElementById('current-user').textContent = currentUser;
+        modal.style.display = 'none';
+        
+        // 重新加载数据
+        reloadUserData();
+        alert('注册成功！');
+    });
+}
+
+// 重新加载用户数据
+function reloadUserData() {
+    // 重置表单
+    document.querySelectorAll('.mood-buttons button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('note').value = '';
+    selectedMood = null;
+    
+    // 加载用户数据
+    loadMoodData();
+    
+    // 更新日历
+    generateCalendar();
+    
+    // 清空详情
+    document.getElementById('details-content').innerHTML = '选择一个日期查看详情';
+}
+
 // 保存心情
 function saveMood() {
     if (!selectedMood) {
@@ -77,17 +214,17 @@ function saveMood() {
     const today = getDateString(new Date());
     
     // 获取现有数据
-    let moodData = JSON.parse(localStorage.getItem('moodData') || '{}');
+    let userMoodData = JSON.parse(localStorage.getItem(`moodData_${currentUser}`) || '{}');
     
     // 保存今天的心情
-    moodData[today] = {
+    userMoodData[today] = {
         mood: selectedMood,
         note: note,
         timestamp: new Date().getTime()
     };
     
     // 保存到本地存储
-    localStorage.setItem('moodData', JSON.stringify(moodData));
+    localStorage.setItem(`moodData_${currentUser}`, JSON.stringify(userMoodData));
     
     // 更新日历
     generateCalendar();
@@ -104,17 +241,17 @@ function saveMood() {
 // 加载心情数据
 function loadMoodData() {
     // 检查本地存储是否有数据
-    const moodData = JSON.parse(localStorage.getItem('moodData') || '{}');
+    const userMoodData = JSON.parse(localStorage.getItem(`moodData_${currentUser}`) || '{}');
     
     // 检查今天是否已有心情记录
     const today = getDateString(new Date());
-    if (moodData[today]) {
-        const todayMood = moodData[today].mood;
+    if (userMoodData[today]) {
+        const todayMood = userMoodData[today].mood;
         // 选中对应的心情按钮
         document.querySelector(`button[data-mood="${todayMood}"]`).classList.add('active');
         selectedMood = todayMood;
         // 填充笔记
-        document.getElementById('note').value = moodData[today].note || '';
+        document.getElementById('note').value = userMoodData[today].note || '';
     }
 }
 
@@ -148,7 +285,7 @@ function generateCalendar() {
     }
     
     // 获取心情数据
-    const moodData = JSON.parse(localStorage.getItem('moodData') || '{}');
+    const userMoodData = JSON.parse(localStorage.getItem(`moodData_${currentUser}`) || '{}');
     const today = getDateString(new Date());
     
     // 添加当月的天数
@@ -166,8 +303,8 @@ function generateCalendar() {
         }
         
         // 检查是否有心情记录
-        if (moodData[dateString]) {
-            const mood = moodData[dateString].mood;
+        if (userMoodData[dateString]) {
+            const mood = userMoodData[dateString].mood;
             dayElement.classList.add('has-mood', `mood-${mood}`);
         }
         
@@ -183,11 +320,11 @@ function generateCalendar() {
 // 显示心情详情
 function showMoodDetails(dateString) {
     const detailsContent = document.getElementById('details-content');
-    const moodData = JSON.parse(localStorage.getItem('moodData') || '{}');
+    const userMoodData = JSON.parse(localStorage.getItem(`moodData_${currentUser}`) || '{}');
     
-    if (moodData[dateString]) {
-        const mood = moodData[dateString].mood;
-        const note = moodData[dateString].note || '无';
+    if (userMoodData[dateString]) {
+        const mood = userMoodData[dateString].mood;
+        const note = userMoodData[dateString].note || '无';
         const emoji = moodEmojis[mood];
         const moodText = moodTexts[mood];
         
