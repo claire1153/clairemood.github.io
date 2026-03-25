@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心情记录</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>心情记录</h1>
+    </header>
+    <main>
+        <div class="container">
+            <section class="mood-input">
+                <h2>今天的心情</h2>
+                <div class="mood-buttons">
+                    <button data-mood="great">😊 很棒</button>
+                    <button data-mood="good">🙂 不错</button>
+                    <button data-mood="neutral">😐 一般</button>
+                    <button data-mood="bad">😞 不好</button>
+                    <button data-mood="terrible">😢 很糟</button>
+                </div>
+                <textarea id="note" placeholder="写下你的想法..."></textarea>
+                <button id="save-btn">保存</button>
+            </section>
+            <section class="calendar">
+                <h2>历史记录</h2>
+                <div class="calendar-header">
+                    <button id="prev-month">&lt;</button>
+                    <h3 id="current-month"></h3>
+                    <button id="next-month">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- 日历格子将通过JavaScript生成 -->
+                </div>
+            </section>
+            <section class="mood-details" id="mood-details">
+                <h2>详情</h2>
+                <div id="details-content">
+                    选择一个日期查看详情
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p>© 2026 心情记录</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
