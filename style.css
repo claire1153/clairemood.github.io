@@ -1,0 +1,231 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f7;
+}
+
+header {
+    background-color: #fff;
+    padding: 20px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1d1d1f;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+section {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1d1d1f;
+}
+
+.mood-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.mood-buttons button {
+    padding: 12px 20px;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    background-color: #f5f5f7;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mood-buttons button:hover {
+    background-color: #e8e8ed;
+}
+
+.mood-buttons button.active {
+    background-color: #0071e3;
+    color: #fff;
+    border-color: #0071e3;
+}
+
+#note {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 100px;
+    margin-bottom: 20px;
+    font-family: inherit;
+}
+
+#save-btn {
+    padding: 12px 24px;
+    background-color: #0071e3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#save-btn:hover {
+    background-color: #0077ed;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.calendar-header button {
+    padding: 8px 16px;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    background-color: #f5f5f7;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calendar-header button:hover {
+    background-color: #e8e8ed;
+}
+
+#current-month {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1d1d1f;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background-color: #f5f5f7;
+}
+
+.calendar-day.today {
+    background-color: #0071e3;
+    color: #fff;
+    font-weight: 600;
+}
+
+.calendar-day.has-mood {
+    font-weight: 600;
+}
+
+.calendar-day.mood-great {
+    background-color: #4cd964;
+    color: #fff;
+}
+
+.calendar-day.mood-good {
+    background-color: #5ac8fa;
+    color: #fff;
+}
+
+.calendar-day.mood-neutral {
+    background-color: #ffcc00;
+    color: #000;
+}
+
+.calendar-day.mood-bad {
+    background-color: #ff9500;
+    color: #fff;
+}
+
+.calendar-day.mood-terrible {
+    background-color: #ff3b30;
+    color: #fff;
+}
+
+#details-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666;
+}
+
+footer {
+    background-color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-top: 40px;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+    
+    section {
+        padding: 20px;
+    }
+    
+    .mood-buttons {
+        gap: 8px;
+    }
+    
+    .mood-buttons button {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .calendar-grid {
+        gap: 8px;
+    }
+    
+    .calendar-day {
+        font-size: 13px;
+    }
+}
